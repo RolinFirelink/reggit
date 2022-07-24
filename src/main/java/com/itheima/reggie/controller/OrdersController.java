@@ -90,8 +90,9 @@ public class OrdersController {
             Long id = item.getId();
             wrapper.eq(OrderDetail::getOrderId,id);
             //根据id查询订单详细表中的数据数量
-            int count = orderDetailService.count(wrapper);
-            ordersDto.setSumNum(count);
+            List<OrderDetail> orderDetailList = orderDetailService.list(wrapper);
+            ordersDto.setSumNum(orderDetailList.size());
+            ordersDto.setOrderDetails(orderDetailList);
             return ordersDto;
         }).collect(Collectors.toList());
 
@@ -99,7 +100,6 @@ public class OrdersController {
 
         return R.success(dtoPage);
     }
-
 
     /**
      * 再来一单

@@ -1,7 +1,10 @@
 package com.itheima.reggie.dto;
 
+import com.itheima.reggie.entity.OrderDetail;
 import com.itheima.reggie.entity.Orders;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class OrdersDto extends Orders {
@@ -11,4 +14,7 @@ public class OrdersDto extends Orders {
 
     //记录下单用户的名字
     private String consignee;
+
+    //记录订单中具体的菜品
+    private List<OrderDetail> orderDetails;
 }

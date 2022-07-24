@@ -3,12 +3,14 @@ package com.itheima.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.reggie.common.R;
+import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.dto.SetmealDto;
 import com.itheima.reggie.entity.Category;
 import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.entity.SetmealDish;
 import com.itheima.reggie.service.CategoryService;
+import com.itheima.reggie.service.DishService;
 import com.itheima.reggie.service.SetmealDishService;
 import com.itheima.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,9 @@ public class SetmealController {
 
     @Autowired
     private SetmealService setmealService;
+
+    @Autowired
+    private DishService dishService;
 
     /**
      * 新增套餐
@@ -156,6 +161,12 @@ public class SetmealController {
         return R.success("套餐修改成功");
     }
 
+
+    /**
+     * 用户端页面显示套餐
+     * @param setmeal
+     * @return
+     */
     @GetMapping("/list")
     public R<List<Setmeal>> list(Setmeal setmeal){
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
@@ -174,12 +185,21 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/dish/{id}")
-    public R<Setmeal> echo(@PathVariable Long id){
+    public R<List<DishDto>> echo(@PathVariable Long id){
 
-        Setmeal setmeal = setmealService.getById(id);
+        LambdaQueryWrapper<SetmealDish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(SetmealDish::getSetmealId,id);
 
-        log.info("setmeal:{}",setmeal);
+        List<SetmealDish> list = setmealDishService.list(lambdaQueryWrapper);
 
-        return R.success(setmeal);
+        List<DishDto> dishDtoList = list.stream().map((item) ->{
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item,dishDto);
+            Dish byId = dishService.getById(item.getDishId());
+            BeanUtils.copyProperties(byId,dishDto);
+            return dishDto;
+        }).collect(Collectors.toList());
+
+        return R.success(dishDtoList);
     }
 }
