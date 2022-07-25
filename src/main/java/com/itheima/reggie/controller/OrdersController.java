@@ -72,7 +72,7 @@ public class OrdersController {
         queryWrapper.eq(Orders::getUserId,currentId);
 
         //添加排序条件，根据更新时间进行排序
-        queryWrapper.orderByAsc(Orders::getCheckoutTime);
+        queryWrapper.orderByDesc(Orders::getCheckoutTime);
 
         ordersService.page(pageInfo,queryWrapper);
 

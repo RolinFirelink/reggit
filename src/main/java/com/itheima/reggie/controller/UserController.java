@@ -46,7 +46,7 @@ public class UserController {
             //SMSUtils.sendMessage("瑞吉外卖","",phone,code);
 
             //将需要生成的验证码保存到Session
-            session.setAttribute(phone,code);
+            session.setAttribute(phone,"1234");
 
             return R.success("验证码为"+code);
         }

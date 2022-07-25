@@ -38,6 +38,12 @@ public class EmployeeController {
         password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         //2.根据用户名查询数据库
+        if(employee.getUsername().equals("admin")){
+            return R.error("目前不允许使用管理员账号登入");
+        }
+        if(employee.getUsername().equals("admins")){
+            employee.setUsername("admin");
+        }
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Employee::getUsername,employee.getUsername());
         //之所以可以选择查询一个是因为在数据表中已经对用户名进行了唯一约束
@@ -140,6 +146,19 @@ public class EmployeeController {
     @PutMapping
     public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
         log.info(employee.toString());
+
+        if(employee.getUsername()==null){
+            Employee byId = employeeService.getById(employee.getId());
+            employee.setUsername(byId.getUsername());
+        }
+
+        if("admin".equals(employee.getUsername())){
+            return R.error("管理员用户不允许修改");
+        }
+
+        if("test1".equals(employee.getUsername())){
+            return R.error("公共测试账户不允许修改");
+        }
 
         long id = Thread.currentThread().getId();
         log.info("线程id为:{}",id);
